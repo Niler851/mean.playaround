@@ -16,7 +16,7 @@ app.service('mailService', ['$http', function($http){
     var getMail = function() {
         return $http({
             method: 'GET',
-            url: 'http://127.0.0.1:3000/api/emails'
+            url: '/api/emails'
         });
     };
 

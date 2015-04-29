@@ -34,17 +34,10 @@ app.use(function(req, res, next) {
     next(); // make sure we go to the next routes and don't stop here
 });
 
-// app.get('/', function(req,res){
-//         res.sendFile(__dirname +'/index.html');
-// });
-// app.get('*', function(req,res){
-//         res.sendFile(__dirname +'/index.html');
-// });
-
 
 
 // test API route to make sure everything is working (accessed at GET http://localhost:8080/api)
- app.use(express.static(__dirname));
+app.use(express.static(__dirname));
 
 api_router.get('/', function(req, res) {
     res.json({ message: 'hooray! welcome to our api!' });
