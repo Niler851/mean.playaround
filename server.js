@@ -16,7 +16,9 @@ app.use(bodyParser.json());
 var port = process.env.PORT || 3000;        // set our port
 
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://admin:admin@ds063909.mongolab.com:63909/stopwatch')
+//mongoose.connect('mongodb://admin:admin@ds063909.mongolab.com:63909/stopwatch') Online
+//mongoose.connect('')
+
 
 var User     = require('./models/users');
 var Email     =require('./models/emails');
@@ -120,6 +122,7 @@ api_router.route('/users/:user_id')
 api_router.route('/emails')
     .post(function(req,res){
         var email = new Email();
+        console.dir(req.body);
         email.from = req.body.from;
         email.subject = req.body.subject;
         email.to = req.body.to;
@@ -132,16 +135,32 @@ api_router.route('/emails')
         });
     })
     .get(function(req,res){
-           Email.find(function(err, emails) {
-                if (err){
-                res.send(err);
-                }
+        //    Email.find(function(err, emails) {
+        //         if (err){
+        //         res.send(err);
+        //         }
 
-            res.json(emails);
+        //     res.json(emails);
+        // });
+           // Dummy data 
+            res.json(
+            [{
+            from:'nils@gmail.com',
+            to:'herp@gmail.com',
+            message:'hej hej hur r lget',
+            sent_at:'20140405',
+            subject:'tja'
+            },{
+            from:'Victor@gmail.com',
+            to:'Sven@gmail.com',
+            message:'hej hej hur rasdfasdfasadfgagag lget',
+            sent_at:Date.now(),
+            subject:'tja asdf asdf'
+            }]);
+        
         });
 
-    });
-
+ 
 
 
 

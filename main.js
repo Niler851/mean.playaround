@@ -12,7 +12,7 @@ app.config(['$routeProvider',function($routeProvider){
     .otherwise({redirectTo: '/'});
 }]);
 
-app.service('mailService', ['$http', function($http){
+app.service('mailService', ['$http','$q', function($http, $q){
     var getMail = function() {
         return $http({
             method: 'GET',
@@ -21,11 +21,24 @@ app.service('mailService', ['$http', function($http){
     };
 
     var sendEmail = function(mail){
+        var d = $q.defer();
 
+        $http({
+            method: 'POST',
+            url: '/api/emails',
+            data: mail
+        }).success(function(data,status, header){
+            d.resolve(data);
+        }).error(function(data, status, header){
+            d.reject(data);
+        });
+
+        return d.promise; 
     };
 
     return {
-        getMail : getMail
+        getMail : getMail,
+        sendEmail : sendEmail
     };
 }]);
 
@@ -50,6 +63,7 @@ app.controller('MailListingController', ['$scope', 'mailService', function($scop
 
     mailService.getMail()
     .success(function(data, status, headers){
+        console.log(data);
         $scope.emails = data;
     })
     .error(function(data, status, headers){
@@ -57,7 +71,7 @@ app.controller('MailListingController', ['$scope', 'mailService', function($scop
     });
 }]);
 
-app.controller('ContentController', ['$scope','$filter','mailService' ,function($scope,$filter,mailService){
+app.controller('ContentController', ['$scope','$rootScope','$filter','mailService' ,function($scope,$rootScope, $filter, mailService){
     $scope.showingReply =false;
     $scope.reply ={};
 
@@ -69,11 +83,17 @@ app.controller('ContentController', ['$scope','$filter','mailService' ,function(
     };
 
     $scope.sendReply = function(){
+        $scope.showingReply = false;
+        $rootScope.loading = true;
+        console.log("in sendReply")
+        console.dir($scope.reply);
+        console.dir($scope.selectedMail);
+        console.dir($scope);
         mailService.sendEmail($scope.reply)
         .then(function(status){
-
+            $rootScope.loading = false;
         },function(err){
-
+            $rootScope.loading = false;
         });
     }
 
